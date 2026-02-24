@@ -1,17 +1,13 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
-# Install MySQL support (Adminer needs this)
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Install MySQL extensions (Adminer needs this)
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Enable rewrite (safe for PHP apps)
-RUN a2enmod rewrite
+WORKDIR /app
 
-# Copy project files
-COPY . /var/www/html/
+COPY . /app
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+# Run PHP built-in server
+CMD ["php", "-S", "0.0.0.0:3000", "adminer.php"]
 
-EXPOSE 80
-
-CMD ["apache2-foreground"]
+EXPOSE 3000
