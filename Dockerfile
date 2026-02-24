@@ -1,16 +1,15 @@
 FROM php:8.2-apache
 
-# Install mysqli for Adminer DB connection
-RUN docker-php-ext-install mysqli
+# Install MySQL support (Adminer needs this)
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Disable conflicting MPM modules
-RUN a2dismod mpm_event \
- && a2dismod mpm_worker \
- && a2enmod mpm_prefork \
- && a2enmod rewrite
+# Enable rewrite (safe for PHP apps)
+RUN a2enmod rewrite
 
+# Copy project files
 COPY . /var/www/html/
 
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
